@@ -6,7 +6,7 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'knights.app',
   description: 'knights',
-  generator: 'knghts',
+  generator: 'knights',
 }
 
 export default function RootLayout({
