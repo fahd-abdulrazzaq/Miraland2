@@ -5,25 +5,19 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'knights.app',
-  description: 'knights',
+  description: 'knights site',
   generator: 'knights',
 }
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang="en">
       <head>
-        <style>{`
-html {
-  font-family: ${GeistSans.style.fontFamily};
-  --font-sans: ${GeistSans.variable};
-  --font-mono: ${GeistMono.variable};
-}
-        `}</style>
+      <body>{children}</body>
       </head>
       <body>{children}</body>
     </html>
