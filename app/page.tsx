@@ -37,7 +37,7 @@ const bubbleData = [
     description:
       "Should you choose this path you will receive all the knowledge you need to be a Builder Knight of Mira",
     links: [
-      { label: "X", url: "https://example.com/trails" },
+      { label: "X", url: "https://x.com/shermansensei/status/1951455002960208348" },
       {
         label: "Guide",
         url: "https://medium.com/@fadabdul15/build-trustworthy-ai-a-developers-guide-to-the-mira-verification-sdk-0aaad32191d2",
