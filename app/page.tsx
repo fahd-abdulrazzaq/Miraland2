@@ -40,7 +40,7 @@ const bubbleData = [
     description:
       "A builder of Mira is a strong and hardworking member of the order who uses his knowledge and skills to create tools that work harmoniously with Mira.\n\nShould you choose this path you will receive all the knowledge you need to be a Builder Knight of Mira.",
     links: [
-      { label: "X", url: "https://x.com/shermansensei/status/1951455002960208348" },
+      { label: "X", url: "https://example.com/trails" },
       {
         label: "Guide",
         url: "https://medium.com/@fadabdul15/build-trustworthy-ai-a-developers-guide-to-the-mira-verification-sdk-0aaad32191d2",
@@ -310,8 +310,16 @@ function ScrollIndicator({ show }: { show: boolean }) {
 }
 
 export default function GalleryLanding() {
-  const [showLargeText, setShowLargeText] = useState(false)
-  const [showSmallText, setShowSmallText] = useState(false)
+  // Animation states
+  const [showWelcome, setShowWelcome] = useState(false)
+  const [showQuestText, setShowQuestText] = useState(false)
+  const [showKnightText, setShowKnightText] = useState(false)
+  const [showLearnText, setShowLearnText] = useState(false)
+  const [showGuideText, setShowGuideText] = useState(false)
+  const [showArticlesText, setShowArticlesText] = useState(false)
+  const [showQuestBeginsText, setShowQuestBeginsText] = useState(false)
+
+  // Other states
   const [isScrolled, setIsScrolled] = useState(false)
   const [headerOpacity, setHeaderOpacity] = useState(1)
   const [introOpacity, setIntroOpacity] = useState(1)
@@ -323,16 +331,12 @@ export default function GalleryLanding() {
   const [galleryTitleHovered, setGalleryTitleHovered] = useState(false)
   const [placeholderHovered, setPlaceholderHovered] = useState(false)
   const [partnersHovered, setPartnersHovered] = useState(false)
-  const [typingText, setTypingText] = useState("")
-  const [currentLine, setCurrentLine] = useState(0)
   const [adventureTypingText, setAdventureTypingText] = useState("")
   const [designedTypingText, setDesignedTypingText] = useState("")
   const [showScrollIndicator, setShowScrollIndicator] = useState(true)
   const [showIntro, setShowIntro] = useState(true)
   const [introComplete, setIntroComplete] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
-  const [showQuestText, setShowQuestText] = useState(false)
-  const [questTextVisible, setQuestTextVisible] = useState(false)
 
   const headerRef = useRef<HTMLElement>(null)
   const introRef = useRef<HTMLElement>(null)
@@ -340,6 +344,7 @@ export default function GalleryLanding() {
   const placeholderRef = useRef<HTMLDivElement>(null)
   const partnersRef = useRef<HTMLDivElement>(null)
   const questTextRef = useRef<HTMLDivElement>(null)
+  const textContainerRef = useRef<HTMLDivElement>(null)
   const loopAudioRef = useRef<HTMLAudioElement>(null)
   const selectAudioRef = useRef<HTMLAudioElement>(null)
 
@@ -350,11 +355,11 @@ export default function GalleryLanding() {
 
     if (loopAudioRef.current) {
       loopAudioRef.current.loop = true
-      loopAudioRef.current.volume = 0.2 // Reduced from 0.3 to 0.2 (20%)
+      loopAudioRef.current.volume = 0.2 // 20%
     }
 
     if (selectAudioRef.current) {
-      selectAudioRef.current.volume = 0.7 // Increased from 0.5 to 0.7 (70%)
+      selectAudioRef.current.volume = 0.7 // 70%
     }
 
     return () => {
@@ -376,7 +381,7 @@ export default function GalleryLanding() {
     }
   }, [introComplete, isMuted])
 
-  // Handle mute toggle
+  // Handle mute toggle - only affects loop audio, not select audio
   const toggleMute = () => {
     setIsMuted(!isMuted)
     if (loopAudioRef.current) {
@@ -388,9 +393,9 @@ export default function GalleryLanding() {
     }
   }
 
-  // Play select sound on hover
+  // Play select sound on hover - always plays regardless of mute state
   const playSelectSound = () => {
-    if (selectAudioRef.current && !isMuted) {
+    if (selectAudioRef.current) {
       selectAudioRef.current.currentTime = 0
       selectAudioRef.current.play().catch(console.error)
     }
@@ -406,24 +411,122 @@ export default function GalleryLanding() {
     return () => clearTimeout(introTimer)
   }, [])
 
+  // Smooth scroll to center the text container
+  const scrollToTextContainer = () => {
+    if (textContainerRef.current) {
+      textContainerRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      })
+    }
+  }
+
+  // New animation sequence with auto-scrolling and 3-second durations
   useEffect(() => {
-    // Only start animations after intro is complete
     if (!introComplete) return
 
-    // Trigger large text animation after intro completes
-    const timer1 = setTimeout(() => {
-      setShowLargeText(true)
+    // 1. Welcome text fades in immediately, fades out after 3 seconds
+    const welcomeTimer = setTimeout(() => {
+      setShowWelcome(true)
+
+      // Scroll to text container before showing quest text (double the fade duration = 6 seconds)
+      setTimeout(() => {
+        scrollToTextContainer()
+      }, 6000)
+
+      // Fade out Welcome after 3 seconds
+      setTimeout(() => {
+        setShowWelcome(false)
+
+        // 2. Quest text fades in, fades out after 3 seconds
+        setTimeout(() => {
+          setShowQuestText(true)
+
+          // Scroll before showing knight text (double the fade duration = 6 seconds)
+          setTimeout(() => {
+            scrollToTextContainer()
+          }, 6000)
+
+          setTimeout(() => {
+            setShowQuestText(false)
+
+            // 3. Knight text fades in, fades out after 3 seconds
+            setTimeout(() => {
+              setShowKnightText(true)
+
+              // Scroll before showing learn text (double the fade duration = 6 seconds)
+              setTimeout(() => {
+                scrollToTextContainer()
+              }, 6000)
+
+              setTimeout(() => {
+                setShowKnightText(false)
+
+                // 4. Learn text fades in, fades out after 3 seconds
+                setTimeout(() => {
+                  setShowLearnText(true)
+
+                  // Scroll before showing guide text (double the fade duration = 6 seconds)
+                  setTimeout(() => {
+                    scrollToTextContainer()
+                  }, 6000)
+
+                  setTimeout(() => {
+                    setShowLearnText(false)
+
+                    // 5. Guide text fades in, fades out after 3 seconds
+                    setTimeout(() => {
+                      setShowGuideText(true)
+
+                      // Scroll before showing articles text (double the fade duration = 6 seconds)
+                      setTimeout(() => {
+                        scrollToTextContainer()
+                      }, 6000)
+
+                      setTimeout(() => {
+                        setShowGuideText(false)
+
+                        // 6. Articles text fades in, fades out after 3 seconds
+                        setTimeout(() => {
+                          setShowArticlesText(true)
+
+                          // Scroll before showing quest begins text (double the fade duration = 6 seconds)
+                          setTimeout(() => {
+                            scrollToTextContainer()
+                          }, 6000)
+
+                          setTimeout(() => {
+                            setShowArticlesText(false)
+
+                            // 7. Quest begins text fades in and stays (no fade out)
+                            setTimeout(() => {
+                              setShowQuestBeginsText(true)
+
+                              // 8. Auto scroll to gallery after 3 seconds
+                              setTimeout(() => {
+                                const gallerySection = galleryTitleRef.current
+                                if (gallerySection) {
+                                  gallerySection.scrollIntoView({
+                                    behavior: "smooth",
+                                    block: "center",
+                                  })
+                                }
+                              }, 3000)
+                            }, 500)
+                          }, 3000)
+                        }, 500)
+                      }, 3000)
+                    }, 500)
+                  }, 3000)
+                }, 500)
+              }, 3000)
+            }, 500)
+          }, 3000)
+        }, 500)
+      }, 3000)
     }, 500)
 
-    // Trigger small text animation after large text is done
-    const timer2 = setTimeout(() => {
-      setShowSmallText(true)
-    }, 2000)
-
-    return () => {
-      clearTimeout(timer1)
-      clearTimeout(timer2)
-    }
+    return () => clearTimeout(welcomeTimer)
   }, [introComplete])
 
   useEffect(() => {
@@ -454,22 +557,6 @@ export default function GalleryLanding() {
       setPlaceholderOpacity(calculateOpacity(placeholderRef.current))
       setPartnersOpacity(calculateOpacity(partnersRef.current))
 
-      // Handle quest text visibility
-      if (questTextRef.current) {
-        const rect = questTextRef.current.getBoundingClientRect()
-        const isInView = rect.top < window.innerHeight && rect.bottom > 0
-
-        if (isInView && !showQuestText) {
-          setShowQuestText(true)
-          setQuestTextVisible(true)
-
-          // Hide after 3 seconds
-          setTimeout(() => {
-            setQuestTextVisible(false)
-          }, 3000)
-        }
-      }
-
       // Add this to the existing handleScroll function, after the existing opacity calculations
       const scrollHeight = document.documentElement.scrollHeight
       const scrollTop = window.scrollY
@@ -484,101 +571,7 @@ export default function GalleryLanding() {
     handleScroll() // Initial calculation
 
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [showQuestText])
-
-  useEffect(() => {
-    if (!showSmallText) return
-
-    const lines = [
-      "Brave one.....",
-      "You have chosen to embark on this quest to claim the most honorable of titles.",
-      "Knight of Mira.",
-      "But first you must learn....",
-      "I shall be your guide",
-      "I have curated a detailed set of articles and legends to help you on your quest.",
-    ]
-
-    let lineIndex = 0
-    let charIndex = 0
-    let currentText = ""
-
-    const typingTimer = setInterval(() => {
-      if (lineIndex < lines.length) {
-        if (charIndex < lines[lineIndex].length) {
-          currentText += lines[lineIndex][charIndex]
-          setTypingText(currentText)
-          charIndex++
-        } else {
-          // Move to next line with 1 second delay
-          currentText += "\n"
-          setTypingText(currentText)
-          lineIndex++
-          charIndex = 0
-
-          // Clear the interval and set a new one with 1 second delay
-          clearInterval(typingTimer)
-          setTimeout(() => {
-            // Restart the typing for the next line
-            const nextTypingTimer = setInterval(() => {
-              if (lineIndex < lines.length) {
-                if (charIndex < lines[lineIndex].length) {
-                  currentText += lines[lineIndex][charIndex]
-                  setTypingText(currentText)
-                  charIndex++
-                } else {
-                  // Move to next line
-                  currentText += "\n"
-                  setTypingText(currentText)
-                  lineIndex++
-                  charIndex = 0
-
-                  if (lineIndex >= lines.length) {
-                    clearInterval(nextTypingTimer)
-                  } else {
-                    // Clear and restart with delay for next line
-                    clearInterval(nextTypingTimer)
-                    setTimeout(() => {
-                      // Continue with recursive approach for remaining lines
-                      const continueTyping = () => {
-                        const timer = setInterval(() => {
-                          if (lineIndex < lines.length) {
-                            if (charIndex < lines[lineIndex].length) {
-                              currentText += lines[lineIndex][charIndex]
-                              setTypingText(currentText)
-                              charIndex++
-                            } else {
-                              currentText += "\n"
-                              setTypingText(currentText)
-                              lineIndex++
-                              charIndex = 0
-
-                              if (lineIndex >= lines.length) {
-                                clearInterval(timer)
-                              } else {
-                                clearInterval(timer)
-                                setTimeout(continueTyping, 1000)
-                              }
-                            }
-                          }
-                        }, 80)
-                      }
-                      continueTyping()
-                    }, 1000)
-                  }
-                }
-              }
-            }, 80)
-          }, 1000)
-        }
-      } else {
-        clearInterval(typingTimer)
-      }
-    }, 80)
-
-    return () => {
-      clearInterval(typingTimer)
-    }
-  }, [showSmallText])
+  }, [])
 
   useEffect(() => {
     // Only start after intro is complete
@@ -606,7 +599,7 @@ export default function GalleryLanding() {
       return () => {
         clearInterval(typingTimer)
       }
-    }, 7000) // Start after intro animation + other animations
+    }, 25000) // Start after all the new animations (approximately 25 seconds)
 
     return () => clearTimeout(adventureTimer)
   }, [introComplete])
@@ -631,7 +624,7 @@ export default function GalleryLanding() {
       return () => {
         clearInterval(typingTimer)
       }
-    }, 9000) // Start after adventure title animation
+    }, 27000) // Start after adventure title animation
 
     return () => clearTimeout(designedTimer)
   }, [introComplete])
@@ -720,7 +713,7 @@ export default function GalleryLanding() {
                   >
                     The Knight's Path
                   </h1>
-<h6> Tip: Double tap speaker button </h6>
+                  <h6>Tip: Double click the Speaker Icon</h6>
                 </div>
 
                 {/* Right side - placeholder for balance */}
@@ -741,43 +734,88 @@ export default function GalleryLanding() {
             onMouseLeave={() => setIntroHovered(false)}
           >
             <div className="text-center max-w-4xl mx-auto">
-              {/* Large Text with Fade In */}
-              <h2
-                className={`text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-8 transition-all duration-1000 drop-shadow-2xl ${
-                  showLargeText ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                }`}
-                onMouseEnter={playSelectSound}
+              {/* Container for all overlapping texts */}
+              <div
+                ref={textContainerRef}
+                className="relative h-24 md:h-32 lg:h-40 mb-8 flex items-center justify-center"
               >
-                {"Welcome"}
-              </h2>
+                {/* Welcome Text */}
+                <h2
+                  className={`absolute text-4xl md:text-6xl lg:text-7xl font-bold text-white transition-all duration-1000 ease-in-out drop-shadow-2xl ${
+                    showWelcome ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                  }`}
+                  onMouseEnter={playSelectSound}
+                >
+                  Welcome
+                </h2>
 
-              {/* Small Paragraph with Delayed Fade In */}
-              <p
-                className={`text-lg md:text-xl lg:text-2xl text-gray-200 leading-relaxed transition-all duration-1000 drop-shadow-lg ${
-                  showSmallText ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                {/* Quest Text */}
+                <p
+                  className={`absolute text-lg md:text-xl lg:text-2xl text-gray-200 leading-relaxed transition-all duration-1000 ease-in-out drop-shadow-lg ${
+                    showQuestText ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                  }`}
+                  onMouseEnter={playSelectSound}
+                >
+                  You have chosen to embark on this quest to claim the most honorable of titles.
+                </p>
+
+                {/* Knight Text */}
+                <p
+                  className={`absolute text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-relaxed transition-all duration-1000 ease-in-out drop-shadow-lg ${
+                    showKnightText ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                  }`}
+                  onMouseEnter={playSelectSound}
+                >
+                  Knight of Mira.
+                </p>
+
+                {/* Learn Text */}
+                <p
+                  className={`absolute text-lg md:text-xl lg:text-2xl text-gray-200 leading-relaxed transition-all duration-1000 ease-in-out drop-shadow-lg ${
+                    showLearnText ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                  }`}
+                  onMouseEnter={playSelectSound}
+                >
+                  But first you must learn....
+                </p>
+
+                {/* Guide Text */}
+                <p
+                  className={`absolute text-lg md:text-xl lg:text-2xl text-gray-200 leading-relaxed transition-all duration-1000 ease-in-out drop-shadow-lg ${
+                    showGuideText ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                  }`}
+                  onMouseEnter={playSelectSound}
+                >
+                  I shall be your guide.
+                </p>
+
+                {/* Articles Text */}
+                <p
+                  className={`absolute text-lg md:text-xl lg:text-2xl text-gray-200 leading-relaxed transition-all duration-1000 ease-in-out drop-shadow-lg ${
+                    showArticlesText ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                  }`}
+                  onMouseEnter={playSelectSound}
+                >
+                  I have created a detailed set of articles and legends to help you on your quest.
+                </p>
+              </div>
+
+              {/* Quest Begins Text - stays permanently */}
+              <div
+                ref={questTextRef}
+                className={`text-center mb-20 mt-20 py-16 transition-all duration-1000 ${
+                  showQuestBeginsText ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
                 }`}
-                style={{ whiteSpace: "pre-line" }}
-                onMouseEnter={playSelectSound}
               >
-                {typingText}
-              </p>
+                <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white drop-shadow-2xl">
+                  Your quest begins now.
+                </h3>
+              </div>
             </div>
           </section>
 
           {/* Gallery Section */}
           <section className="container mx-auto px-4 py-12 md:py-16">
-            {/* Quest Text */}
-            <div
-              ref={questTextRef}
-              className={`text-center mb-20 mt-20 py-16 transition-all duration-1000 ${
-                questTextVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-              }`}
-            >
-              <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white drop-shadow-2xl">
-                Your quest begins now.
-              </h3>
-            </div>
-
             <div
               ref={galleryTitleRef}
               className="text-center mb-16"
