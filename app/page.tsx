@@ -720,6 +720,7 @@ export default function GalleryLanding() {
                   >
                     The Knight's Path
                   </h1>
+<h6> Tip: Double tap speaker button </h6>
                 </div>
 
                 {/* Right side - placeholder for balance */}
