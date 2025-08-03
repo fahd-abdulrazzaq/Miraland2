@@ -333,6 +333,8 @@ export default function GalleryLanding() {
   const [isMuted, setIsMuted] = useState(false)
   const [showQuestText, setShowQuestText] = useState(false)
   const [questTextVisible, setQuestTextVisible] = useState(false)
+  const [speakerClickCount, setSpeakerClickCount] = useState(0)
+  const [showSpeakerBounce, setShowSpeakerBounce] = useState(true)
 
   const headerRef = useRef<HTMLElement>(null)
   const introRef = useRef<HTMLElement>(null)
@@ -344,13 +346,14 @@ export default function GalleryLanding() {
   const selectAudioRef = useRef<HTMLAudioElement>(null)
 
   // Initialize audio
+
   useEffect(() => {
     loopAudioRef.current = new Audio("/sounds/loop.mp3")
     selectAudioRef.current = new Audio("/sounds/select.mp3")
 
     if (loopAudioRef.current) {
       loopAudioRef.current.loop = true
-      loopAudioRef.current.volume = 0.2 // Reduced from 0.3 to 0.2 (20%)
+      loopAudioRef.current.volume = 0.1 // Reduced from 0.3 to 0.2 (20%)
     }
 
     if (selectAudioRef.current) {
@@ -581,7 +584,6 @@ export default function GalleryLanding() {
   }, [showSmallText])
 
   useEffect(() => {
-    // Only start after intro is complete
     if (!introComplete) return
 
     const adventureTimer = setTimeout(() => {
@@ -635,6 +637,29 @@ export default function GalleryLanding() {
 
     return () => clearTimeout(designedTimer)
   }, [introComplete])
+
+  // Speaker bounce animation effect
+  useEffect(() => {
+    if (speakerClickCount >= 2) {
+      setShowSpeakerBounce(false)
+      return
+    }
+
+    const bounceInterval = setInterval(() => {
+      if (speakerClickCount < 2) {
+        // Trigger bounce animation by adding/removing class
+        const speakerButton = document.getElementById("speaker-button")
+        if (speakerButton) {
+          speakerButton.classList.add("animate-bounce-twice")
+          setTimeout(() => {
+            speakerButton.classList.remove("animate-bounce-twice")
+          }, 1000) // Remove class after animation completes
+        }
+      }
+    }, 3000)
+
+    return () => clearInterval(bounceInterval)
+  }, [speakerClickCount])
 
   function IntroAnimation({ show }: { show: boolean }) {
     if (!show) return null
@@ -720,7 +745,8 @@ export default function GalleryLanding() {
                   >
                     The Knight's Path
                   </h1>
-<h6> Tip: Double tap speaker button </h6>
+
+                  <h6> Tip: Double tap speaker button</h6>
                 </div>
 
                 {/* Right side - placeholder for balance */}
@@ -915,8 +941,14 @@ export default function GalleryLanding() {
             </a>
             {/* Mute Button */}
             <button
-              onClick={toggleMute}
-              className="flex items-center justify-center w-12 h-12 bg-black/40 backdrop-blur-sm border border-gray-600/30 rounded-full hover:bg-black/60 transition-all duration-300 hover:scale-110"
+              id="speaker-button"
+              onClick={() => {
+                toggleMute()
+                setSpeakerClickCount((prev) => prev + 1)
+              }}
+              className={`flex items-center justify-center w-12 h-12 bg-black/40 backdrop-blur-sm border border-gray-600/30 rounded-full hover:bg-black/60 transition-all duration-300 hover:scale-110 ${
+                showSpeakerBounce ? "speaker-bounce" : ""
+              }`}
               title={isMuted ? "Unmute" : "Mute"}
               onMouseEnter={playSelectSound}
             >
@@ -927,6 +959,30 @@ export default function GalleryLanding() {
           <ScrollIndicator show={showScrollIndicator} />
         </div>
       </div>
+      {/* Custom CSS for speaker bounce animation */}
+      <style jsx>{`
+        @keyframes bounce-twice {
+          0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+          }
+          10% {
+            transform: translateY(-10px);
+          }
+          30% {
+            transform: translateY(-5px);
+          }
+          40% {
+            transform: translateY(-8px);
+          }
+          60% {
+            transform: translateY(-3px);
+          }
+        }
+        
+        .animate-bounce-twice {
+          animation: bounce-twice 1s ease-in-out;
+        }
+      `}</style>
     </>
   )
 }
